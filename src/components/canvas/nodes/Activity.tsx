@@ -1,5 +1,6 @@
 import { Handle, Position } from "reactflow";
 import constants from '../../../constants';
+import './Activity.css';
 
 type Props = {
   data: {
@@ -12,15 +13,8 @@ const ActivityNode = ({ data }: Props) => {
 
   return (
     <div
-      style={{
-        width,
-        height: constants.CELL_SIZE,
-        background: '#ffd600',
-        border: '1px solid #ff6f00',
-        borderRadius: 4,
-        position: 'relative',
-        boxSizing: 'border-box',
-      }}
+      className="activity-node"
+      style={{ width, height: constants.CELL_SIZE }}
     >
       <Handle type="target" position={Position.Left} />
       <Handle type="source" position={Position.Right} />

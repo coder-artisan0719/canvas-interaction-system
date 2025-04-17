@@ -1,15 +1,13 @@
 import { Handle, Position } from 'reactflow';
 import constants from '../../../constants';
+import './Event.css';
 
 const EventNode = () => (
   <div
+    className="event-node"
     style={{
       width: constants.CELL_SIZE,
       height: constants.CELL_SIZE,
-      background: '#00e5ff',
-      borderRadius: '50%',
-      border: '1px solid #0288d1',
-      boxSizing: 'border-box',
     }}
   >
     <Handle type="target" position={Position.Left} />

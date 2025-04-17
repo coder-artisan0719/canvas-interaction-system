@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "canvas-interaction-system",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -16,6 +16,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-scripts": "^5.0.1",
+    "react-toastify": "^11.0.5",
     "reactflow": "^11.11.4",
     "typescript": "^4.9.5",
     "uuid": "^11.1.0",

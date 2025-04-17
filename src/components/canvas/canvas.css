@@ -7,3 +7,19 @@
 .react-flow-wrapper {
   flex: 1;
 }
+
+.grid-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, #444 1px, transparent 1px),
+    linear-gradient(to bottom, #444 1px, transparent 1px);
+  background-size: var(--cell-size) var(--cell-size);
+  z-index: 1;
+  opacity: 0.3;
+}
+
+:root {
+  --cell-size: 25px;
+}
