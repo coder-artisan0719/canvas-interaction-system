@@ -12,16 +12,17 @@ import ReactFlow, {
   Connection,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import constants from '../../constants';
+import { CELL_SIZE, NODE_TYPES, GRID_ROWS, GRID_COLS } from '../../constants';
 import ActivityNode from './nodes/Activity';
 import EventNode from './nodes/Event';
 import ToolBox from './toolbox';
+import GridCanvas from './GridCanvas';
 import { toast } from 'react-toastify';
 import './canvas.css';
 
 const snapToCell = (x: number, y: number) => [
-  Math.round(x / constants.CELL_SIZE) * constants.CELL_SIZE,
-  Math.round(y / constants.CELL_SIZE) * constants.CELL_SIZE,
+  Math.round(x / CELL_SIZE) * CELL_SIZE,
+  Math.round(y / CELL_SIZE) * CELL_SIZE,
 ];
 
 const nodeTypes = {
@@ -39,22 +40,22 @@ const Canvas: React.FC = () => {
   const [viewport, setViewport] = useState({ x: 0, y: 0, zoom: 1 });
 
   const isOnCellBorder = (x: number, y: number) => {
-    const offsetX = x % constants.CELL_SIZE;
-    const offsetY = y % constants.CELL_SIZE;
+    const offsetX = x % CELL_SIZE;
+    const offsetY = y % CELL_SIZE;
     const threshold = 30;
-    const nearVerticalBorder = offsetX < threshold || offsetX > constants.CELL_SIZE - threshold;
-    const nearHorizontalBorder = offsetY < threshold || offsetY > constants.CELL_SIZE - threshold;
+    const nearVerticalBorder = offsetX < threshold || offsetX > CELL_SIZE - threshold;
+    const nearHorizontalBorder = offsetY < threshold || offsetY > CELL_SIZE - threshold;
     return nearVerticalBorder || nearHorizontalBorder;
   };
 
   const isNearActivityEnd = (x: number, y: number) => {
-    const threshold = constants.CELL_SIZE;
+    const threshold = CELL_SIZE;
     for (const node of nodes) {
       if (node.type !== 'activity') continue;
       const span = node.data?.span || activitySpan;
       const head = node.position;
       const butt = {
-        x: node.position.x + span * constants.CELL_SIZE,
+        x: node.position.x + span * CELL_SIZE,
         y: node.position.y,
       };
       const nearHead = Math.abs(x - head.x) < threshold && Math.abs(y - head.y) < threshold;
@@ -75,11 +76,22 @@ const Canvas: React.FC = () => {
       y: event.clientY - bounds.top,
     });
 
-    const [xCell, yCell] = snapToCell(pos.x, pos.y);
+    let [xCell, yCell] = snapToCell(pos.x, pos.y);
+    const col = xCell / CELL_SIZE;
+    const row = yCell / CELL_SIZE;
+
+    if (col < 0 || col >= GRID_COLS || row < 0 || row >= GRID_ROWS) {
+      toast.warning('Drop is outside of the 25x25 grid!', { className: 'toast-message' });
+      return;
+    }
 
     if (dragType === 'activity') {
       if (!isOnCellBorder(pos.x, pos.y)) {
-        toast.warning('Activities must be dropped on cell borders only.',{className: 'toast-message',});
+        toast.warning('Activities must be dropped on cell borders only.', { className: 'toast-message' });
+        return;
+      }
+      if (col + activitySpan > GRID_COLS) {
+        toast.warning('Activity cannot span outside the grid.', { className: 'toast-message' });
         return;
       }
     }
@@ -87,9 +99,12 @@ const Canvas: React.FC = () => {
     if (dragType === 'event') {
       const activity = isNearActivityEnd(pos.x, pos.y);
       if (!activity) {
-        toast.warning('Events must be dropped at the head or butt of an activity.',{className: 'toast-message',});
+        toast.warning('Events must be dropped at the head or butt of an activity.', { className: 'toast-message' });
         return;
       }
+      const snapped = snapToCell(activity.pos.x, activity.pos.y);
+      xCell = snapped[0];
+      yCell = snapped[1];
     }
 
     const id = `${dragType}-${Date.now()}`;
@@ -98,6 +113,8 @@ const Canvas: React.FC = () => {
       type: dragType,
       position: { x: xCell, y: yCell },
       data: { span: activitySpan },
+      width: dragType === 'activity' ? activitySpan * CELL_SIZE : CELL_SIZE,
+      height: CELL_SIZE,
       sourcePosition: Position.Right,
       targetPosition: Position.Left,
     };
@@ -110,7 +127,6 @@ const Canvas: React.FC = () => {
   const onConnect = useCallback((params: Connection | Edge) => {
     const sourceNode = nodes.find((n) => n.id === params.source);
     const targetNode = nodes.find((n) => n.id === params.target);
-
     if (!sourceNode || !targetNode) return;
 
     const isValid =
@@ -118,21 +134,22 @@ const Canvas: React.FC = () => {
       (sourceNode.type === 'activity' && targetNode.type === 'event');
 
     if (!isValid) {
-      toast.warning('Only event-activity connections allowed.',{className: 'toast-message',});
+      toast.warning('Only event-activity connections allowed.', { className: 'toast-message' });
       return;
     }
 
     if (sourceNode.type === 'event') {
       const alreadyConnected = edges.some((e) => e.source === sourceNode.id);
       if (alreadyConnected) {
-        toast.warning('Each event can only connect to one activity.',{className: 'toast-message',});
+        toast.warning('Each event can only connect to one activity.', { className: 'toast-message' });
         return;
       }
     }
+
     if (targetNode.type === 'event') {
       const alreadyConnected = edges.some((e) => e.target === targetNode.id);
       if (alreadyConnected) {
-        toast.warning('Each event can only connect to one activity.',{className: 'toast-message',});
+        toast.warning('Each event can only connect to one activity.', { className: 'toast-message' });
         return;
       }
     }
@@ -162,10 +179,10 @@ const Canvas: React.FC = () => {
   };
 
   const onDragStart = (e: any, nodeType: string) => {
-    if (nodeType === constants.NODE_TYPES.ACTIVITY) {
+    if (nodeType === NODE_TYPES.ACTIVITY) {
       setDragType('activity');
       setActivitySpan(e.shiftKey ? 4 : 2);
-    } else if (nodeType === constants.NODE_TYPES.EVENT) {
+    } else if (nodeType === NODE_TYPES.EVENT) {
       setDragType('event');
     }
   };
@@ -193,9 +210,7 @@ const Canvas: React.FC = () => {
               setRfInstance(instance);
               setViewport({ ...instance.getViewport() });
             }}
-            onMoveEnd={(e, vp) => {
-              setViewport({ ...vp });
-            }}
+            onMoveEnd={(e, vp) => setViewport({ ...vp })}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onDrop={onDrop}
@@ -214,8 +229,10 @@ const Canvas: React.FC = () => {
               )
             }
             edgesUpdatable
+            snapGrid={[CELL_SIZE, CELL_SIZE]}
+            nodeExtent={[[0, 0], [GRID_COLS * CELL_SIZE, GRID_ROWS * CELL_SIZE]]}
+            translateExtent={[[0, 0], [GRID_COLS * CELL_SIZE, GRID_ROWS * CELL_SIZE]]}
             fitView
-            snapGrid={[constants.CELL_SIZE, constants.CELL_SIZE]}
             onNodeContextMenu={(event, node) => {
               event.preventDefault();
               setNodes((nds) => nds.filter((n) => n.id !== node.id));
@@ -226,13 +243,12 @@ const Canvas: React.FC = () => {
               setEdges((eds) => eds.filter((e) => e.id !== edge.id));
             }}
           >
-           <div
-            className="grid-overlay"
-            style={{
-              transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom})`,
-              transformOrigin: '0 0',
-            }}
-          />
+            <GridCanvas
+              style={{
+                transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom})`,
+                transformOrigin: '0 0',
+              }}
+            />
             <Controls />
           </ReactFlow>
         </div>

@@ -1,24 +1,25 @@
 import React from 'react';
-import constants from '../../../constants';
+import { NODE_TYPES } from '../../../constants';
+
 import Summary from '../summary';
 import './toolbox.css';
 
 type Props = {
-  onDragStart: any
-  onSave: any
-  onLoad: any
+  onDragStart: (e: React.DragEvent, type: string) => void;
+  onSave: () => void;
+  onLoad: () => void;
   summary?: {
-    activities: number
-    events: number
-    connections: number
-  }
-}
+    activities: number;
+    events: number;
+    connections: number;
+  };
+};
 
 const ToolBox = ({
   onDragStart,
   onSave,
   onLoad,
-  summary
+  summary,
 }: Props) => {
   return (
     <div className='toolbox-wrapper'>
@@ -29,14 +30,14 @@ const ToolBox = ({
 
         <div
           draggable
-          onDragStart={(e) => onDragStart(e, constants.NODE_TYPES.ACTIVITY)}
+          onDragStart={(e) => onDragStart(e, NODE_TYPES.ACTIVITY)}
           className='activity-node-item'
         >
           Activity
         </div>
         <div
           draggable
-          onDragStart={(e) => onDragStart(e, constants.NODE_TYPES.EVENT)}
+          onDragStart={(e) => onDragStart(e, NODE_TYPES.EVENT)}
           className='event-node-item'
         >
           Event
@@ -56,7 +57,7 @@ const ToolBox = ({
         connections={summary?.connections}
       />
     </div>
-  )
-}
+  );
+};
 
 export default ToolBox;

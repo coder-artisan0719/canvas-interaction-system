@@ -1,13 +1,14 @@
 import { Handle, Position } from 'reactflow';
-import constants from '../../../constants';
+import { CELL_SIZE } from '../../../constants';
+
 import './Event.css';
 
 const EventNode = () => (
   <div
     className="event-node"
     style={{
-      width: constants.CELL_SIZE,
-      height: constants.CELL_SIZE,
+      width: CELL_SIZE,
+      height: CELL_SIZE,
     }}
   >
     <Handle type="target" position={Position.Left} />
