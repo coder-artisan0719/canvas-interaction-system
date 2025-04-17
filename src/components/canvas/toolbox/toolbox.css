@@ -1,0 +1,61 @@
+.toolbox-wrapper {
+  width: 220px;
+  padding: 16px;
+  background: #1e1e1e;
+  color: #fff;
+  border-right: 1px solid #333;
+}
+
+.toolbox-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 0;
+  text-align: center;
+}
+
+.toolbox-item label {
+  font-weight: 700;
+  text-align: left;
+}
+
+.activity-node-item {
+  padding: 8px;
+  background-color: #444;
+  cursor: grab;
+  border-radius: 4px;
+}
+
+.event-node-item {
+  padding: 8px;
+  background-color: #2196f3;
+  cursor: grab;
+  border-radius: 4px;
+}
+
+.toolbox-nodes {
+  border-bottom: 1px solid #fff;
+}
+
+.toolbox-actions {
+  border-bottom: 1px solid #fff;
+}
+
+.action-btn {
+  padding: 8px 0;
+  font-weight: 700;
+  color: #fff;
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.action-btn:hover {
+  color: #fff;
+  background-color: #138496;
+  border-color: #117a8b;
+}
