@@ -181,7 +181,7 @@ const Canvas: React.FC = () => {
   const onDragStart = (e: any, nodeType: string) => {
     if (nodeType === NODE_TYPES.ACTIVITY) {
       setDragType('activity');
-      setActivitySpan(e.shiftKey ? 4 : 2);
+      setActivitySpan(e.shiftKey ? 2 : 1);
     } else if (nodeType === NODE_TYPES.EVENT) {
       setDragType('event');
     }

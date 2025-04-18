@@ -14,7 +14,6 @@ const ActivityNode = ({ data }: Props) => {
   return (
     <div
       className="activity-node"
-      // style={{ width, height: CELL_SIZE }}
       style={{ width: CELL_SIZE * 2, maxWidth: CELL_SIZE * 2, height: CELL_SIZE }}
 
     >

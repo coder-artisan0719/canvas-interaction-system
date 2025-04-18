@@ -21,7 +21,6 @@ const GridCanvas = ({ style }: { style?: React.CSSProperties }) => {
     ctx.strokeStyle = '#e0e0e0';
     ctx.lineWidth = 1;
 
-    // vertical lines
     for (let i = 0; i <= GRID_COLS; i++) {
       const x = i * CELL_SIZE;
       ctx.beginPath();
@@ -30,7 +29,6 @@ const GridCanvas = ({ style }: { style?: React.CSSProperties }) => {
       ctx.stroke();
     }
 
-    // horizontal lines
     for (let i = 0; i <= GRID_ROWS; i++) {
       const y = i * CELL_SIZE;
       ctx.beginPath();

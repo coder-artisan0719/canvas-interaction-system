@@ -1,5 +1,3 @@
-// constants.ts
-
 export const CELL_SIZE = 25;
 export const GRID_COLS = 25;
 export const GRID_ROWS = 25;
